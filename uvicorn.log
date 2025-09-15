@@ -1,0 +1,104 @@
+INFO:     Will watch for changes in these directories: ['/workspace']
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [3434] using WatchFiles
+Process SpawnProcess-1:
+Traceback (most recent call last):
+  File "/usr/lib/python3.13/multiprocessing/process.py", line 313, in _bootstrap
+    self.run()
+    ~~~~~~~~^^
+  File "/usr/lib/python3.13/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/.venv/lib/python3.13/site-packages/uvicorn/_subprocess.py", line 80, in subprocess_started
+    target(sockets=sockets)
+    ~~~~~~^^^^^^^^^^^^^^^^^
+  File "/workspace/.venv/lib/python3.13/site-packages/uvicorn/server.py", line 65, in run
+    return asyncio.run(self.serve(sockets=sockets))
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/usr/lib/python3.13/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "uvloop/loop.pyx", line 1518, in uvloop.loop.Loop.run_until_complete
+  File "/workspace/.venv/lib/python3.13/site-packages/uvicorn/server.py", line 69, in serve
+    await self._serve(sockets)
+  File "/workspace/.venv/lib/python3.13/site-packages/uvicorn/server.py", line 76, in _serve
+    config.load()
+    ~~~~~~~~~~~^^
+  File "/workspace/.venv/lib/python3.13/site-packages/uvicorn/config.py", line 434, in load
+    self.loaded_app = import_from_string(self.app)
+                      ~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "/workspace/.venv/lib/python3.13/site-packages/uvicorn/importer.py", line 19, in import_from_string
+    module = importlib.import_module(module_str)
+  File "/usr/lib/python3.13/importlib/__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 1026, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/workspace/app/main.py", line 11, in <module>
+    from .routers.todos import router as todos_router
+  File "/workspace/app/routers/todos.py", line 77, in <module>
+    @router.delete("/{todo_id}", status_code=status.HTTP_204_NO_CONTENT)
+     ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 992, in decorator
+    self.add_api_route(
+    ~~~~~~~~~~~~~~~~~~^
+        path,
+        ^^^^^
+    ...<23 lines>...
+        generate_unique_id_function=generate_unique_id_function,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/workspace/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 931, in add_api_route
+    route = route_class(
+        self.prefix + path,
+    ...<24 lines>...
+        generate_unique_id_function=current_generate_unique_id,
+    )
+  File "/workspace/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 507, in __init__
+    assert is_body_allowed_for_status_code(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        status_code
+        ^^^^^^^^^^^
+    ), f"Status code {status_code} must not have a response body"
+    ^
+AssertionError: Status code 204 must not have a response body
+WARNING:  WatchFiles detected changes in 'app/routers/todos.py'. Reloading...
+INFO:     Started server process [3670]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:48910 - "GET /todos HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:50316 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57494 - "GET /todos HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:57674 - "GET /todos HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:57684 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57690 - "GET /todos HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:57694 - "POST /todos HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:57710 - "GET /todos HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:57712 - "DELETE /todos/1 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57714 - "GET /todos HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:48146 - "GET /todos HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:48160 - "POST /todos HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:48162 - "GET /todos HTTP/1.1" 307 Temporary Redirect
+WARNING:  WatchFiles detected changes in 'app/routers/todos.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [3670]
+INFO:     Started server process [4971]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:42496 - "GET /todos HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42510 - "POST /todos HTTP/1.1" 201 Created
+INFO:     127.0.0.1:42526 - "GET /todos HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42536 - "PATCH /todos/1/toggle HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42540 - "GET /todos HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42548 - "DELETE /todos/1 HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:42560 - "GET /todos HTTP/1.1" 200 OK
