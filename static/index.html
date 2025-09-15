@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>FastAPI Todo</title>
+    <style>
+      body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 2rem; }
+      h1 { margin-bottom: 0.5rem; }
+      #app { max-width: 800px; }
+      .todo { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0; border-bottom: 1px solid #eee; }
+      .todo.completed .title { text-decoration: line-through; color: #888; }
+      .spacer { flex: 1; }
+      input[type="text"], textarea { width: 100%; padding: 0.5rem; }
+      button { padding: 0.4rem 0.7rem; }
+      small { color: #666; }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <h1>FastAPI Todo</h1>
+      <form id="create-form">
+        <input id="title" type="text" placeholder="What needs to be done?" required maxlength="200" />
+        <textarea id="description" rows="2" placeholder="Optional description" maxlength="2000"></textarea>
+        <button type="submit">Add</button>
+      </form>
+
+      <div style="margin: 1rem 0; display: flex; gap: 0.5rem; align-items: center;">
+        <input id="search" type="text" placeholder="Search title..." />
+        <label><input id="filter-completed" type="checkbox" /> Completed only</label>
+        <button id="refresh">Refresh</button>
+        <span class="spacer"></span>
+        <small>API: <code>/todos</code></small>
+      </div>
+
+      <div id="list"></div>
+    </div>
+
+    <script>
+      const listEl = document.getElementById('list');
+      const refreshBtn = document.getElementById('refresh');
+      const searchEl = document.getElementById('search');
+      const filterCompletedEl = document.getElementById('filter-completed');
+      const createForm = document.getElementById('create-form');
+      const titleEl = document.getElementById('title');
+      const descriptionEl = document.getElementById('description');
+
+      async function fetchTodos() {
+        const params = new URLSearchParams();
+        if (searchEl.value) params.set('search', searchEl.value);
+        if (filterCompletedEl.checked) params.set('completed', 'true');
+        const res = await fetch(`/todos?${params.toString()}`);
+        const data = await res.json();
+        renderList(data);
+      }
+
+      function renderList(items) {
+        listEl.innerHTML = '';
+        if (!items.length) {
+          listEl.innerHTML = '<p>No todos yet.</p>';
+          return;
+        }
+        for (const t of items) {
+          const row = document.createElement('div');
+          row.className = 'todo' + (t.completed ? ' completed' : '');
+          row.innerHTML = `
+            <input type="checkbox" ${t.completed ? 'checked' : ''} />
+            <span class="title">${escapeHtml(t.title)}</span>
+            <span class="spacer"></span>
+            <button data-action="delete">Delete</button>
+          `;
+          const checkbox = row.querySelector('input[type="checkbox"]');
+          checkbox.addEventListener('change', async () => {
+            await fetch(`/todos/${t.id}/toggle`, { method: 'PATCH' });
+            fetchTodos();
+          });
+          const delBtn = row.querySelector('button[data-action="delete"]');
+          delBtn.addEventListener('click', async () => {
+            await fetch(`/todos/${t.id}`, { method: 'DELETE' });
+            fetchTodos();
+          });
+          listEl.appendChild(row);
+        }
+      }
+
+      createForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const payload = { title: titleEl.value, description: descriptionEl.value || null };
+        await fetch('/todos', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        titleEl.value = '';
+        descriptionEl.value = '';
+        fetchTodos();
+      });
+
+      refreshBtn.addEventListener('click', fetchTodos);
+      searchEl.addEventListener('input', () => { clearTimeout(window.__t); window.__t = setTimeout(fetchTodos, 250); });
+      filterCompletedEl.addEventListener('change', fetchTodos);
+
+      function escapeHtml(str) {
+        return str.replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','\'':'&#39;','"':'&quot;'}[c]));
+      }
+
+      fetchTodos();
+    </script>
+  </body>
+  </html>
+
